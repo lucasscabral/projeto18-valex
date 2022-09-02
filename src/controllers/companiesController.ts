@@ -1,12 +1,20 @@
-import { Request,Response } from "express";
-import { buscarEmpresa } from "../services/companiesService";
+import { Request, Response } from "express";
+import { buscarEmpresa, buscarUsuario } from "../services/companiesService";
 
-export async function createCards(req:Request,res:Response) {
+export async function createCards(req: Request, res: Response) {
     const apiKey = res.locals.apiKey
-    const {typeCard} = res.locals.body
-    const {idUser} = req.params
+    const tipoCartao = res.locals.tipoCartao
+    const idUsuario = Number(req.params.idUser)
+    try {
+        const verificaEmpresa = await buscarEmpresa(apiKey)
+        const varificaIdUsuario = await buscarUsuario(idUsuario)
 
-    const verificaEmpresa = await buscarEmpresa(apiKey)
+        res.status(200).send(varificaIdUsuario)
+    } catch ({ code, message }) {
+        if (code === "NotFound") {
+            return res.status(404).send(message)
+        }
+        res.sendStatus(500)
+    }
 
-    res.status(200).send(verificaEmpresa)
 }

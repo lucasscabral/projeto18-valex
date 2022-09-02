@@ -1,21 +1,36 @@
 import validaCorpoCriacaoCard from "../schemas/companiesSchema"
 import { Request, Response, NextFunction } from "express"
+import { boolean } from "joi"
 
-export async function checarRequisicaoCriacaoCard(req:Request,res:Response,next:NextFunction) {
-    const {['x-api-key']: apiKey} = req.headers
-    if(!apiKey){
+export async function checarRequisicaoCriacaoCard(req: Request, res: Response, next: NextFunction) {
+    const { ['x-api-key']: apiKey } = req.headers
+    if (!apiKey) {
         return res.status(403).send('Informe uma API KEY')
     }
-    const body = req.body
+    const tipoCartao: string = req.body.typeCard
 
-    const validouCorpo = validaCorpoCriacaoCard.validate(body)
+    const validouCorpo = validaCorpoCriacaoCard.validate({ typeCard: tipoCartao })
 
-    if(validouCorpo.error){
+    if (validouCorpo.error) {
         return res.status(403).send("Informe todos os dados")
     }
-    console.log(apiKey)
-    res.locals.body = body
+
+    if (!checaTipoDoCArtao(tipoCartao)) {
+        return res.status(403).send("O Tipo do cartão deve ser válido")
+    }
+
+    res.locals.tipoCartao = tipoCartao
     res.locals.apiKey = apiKey
-    
+
     next()
+}
+
+
+function checaTipoDoCArtao(tipoCartao: string): boolean {
+    let checado = false
+    if ((tipoCartao === 'groceries') || (tipoCartao === 'restaurants') || (tipoCartao === 'transport') || (tipoCartao === 'education') || (tipoCartao === 'health')) {
+        checado = true
+        return checado
+    }
+    return checado
 }
