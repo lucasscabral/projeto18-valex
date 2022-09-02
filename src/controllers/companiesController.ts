@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { buscarEmpresa, buscarUsuario, formaNumeroCartaoFormatado, formatarNomeCartao, geraDataDeValidade, geraCodigoCvc } from "../services/companiesService";
+import { buscarEmpresa, buscarUsuario, formaNumeroCartaoFormatado, formatarNomeCartao, geraDataDeValidade, geraCodigoCvc, verificaTipoDeCard } from "../services/companiesService";
 
 export async function createCards(req: Request, res: Response) {
     const apiKey = res.locals.apiKey
@@ -12,8 +12,8 @@ export async function createCards(req: Request, res: Response) {
         const nomeCartao = await formatarNomeCartao(verificaIdUsuario.fullName)
         const dataVencimento = await geraDataDeValidade()
         const codigoCvc = await geraCodigoCvc()
+        await verificaTipoDeCard(idUsuario, tipoCartao)
 
-        console.log(dataVencimento)
 
         res.status(200).send(verificaIdUsuario)
     } catch ({ code, message }) {

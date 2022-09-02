@@ -1,6 +1,7 @@
 import * as companiesRepository from "../repositories/companiesRepository"
 import { faker } from '@faker-js/faker';
 import dayjs from "dayjs"
+import Cryptr from "cryptr"
 
 export async function buscarEmpresa(apiKey: string) {
 
@@ -56,6 +57,24 @@ export async function geraDataDeValidade() {
 
     return dataVencimento
 }
+
 export async function geraCodigoCvc() {
+    const cryptr = new Cryptr('myTotallySecretKey');
     const codigoCvc = faker.random.numeric(3)
+
+    const encryptedcodigoCvc = cryptr.encrypt(codigoCvc);
+
+    return encryptedcodigoCvc
 }
+
+export async function verificaTipoDeCard(idUsuario: number, tipoCartao: string) {
+    const { rows: existeTipoDeCardDoUser } = await companiesRepository.existenciaDoTipoCartao(idUsuario, tipoCartao)
+    console.log(existeTipoDeCardDoUser)
+
+    if (existeTipoDeCardDoUser.length > 0) {
+        throw { code: "Unauthorized", message: "Usuário não pode ter mais de um cartão de mesmo tipo" }
+    }
+    console.log("Entrei aqui")
+    return existeTipoDeCardDoUser
+}
+

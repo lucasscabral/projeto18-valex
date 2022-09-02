@@ -25,10 +25,9 @@ export async function checarRequisicaoCriacaoCard(req: Request, res: Response, n
     next()
 }
 
-
 function checaTipoDoCArtao(tipoCartao: string): boolean {
     let checado = false
-    if ((tipoCartao === 'groceries') || (tipoCartao === 'restaurants') || (tipoCartao === 'transport') || (tipoCartao === 'education') || (tipoCartao === 'health')) {
+    if ((tipoCartao === 'groceries') || (tipoCartao === 'restaurant') || (tipoCartao === 'transport') || (tipoCartao === 'education') || (tipoCartao === 'health')) {
         checado = true
         return checado
     }
