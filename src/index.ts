@@ -1,9 +1,10 @@
 import express, { json } from "express"
+import "express-async-errors"
 import cors from "cors"
 import dotenv from "dotenv"
 import router from "./routers/index"
-import "express-async-errors"
 import errorsHendler from "../src/middlewers/errorsHendler"
+
 
 dotenv.config()
 
@@ -16,4 +17,4 @@ server.use(errorsHendler)
 
 const PORT: number = Number(process.env.PORT)
 
-server.listen(PORT, () => console.log("SERVIDOR RODANDO"))
+server.listen(PORT, () => console.log(`Servidor Rodando na porta: ${PORT}`))

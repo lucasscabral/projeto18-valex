@@ -1,6 +1,5 @@
 import validaCorpoCriacaoCard from "../schemas/companiesSchema"
 import { Request, Response, NextFunction } from "express"
-import { boolean } from "joi"
 
 export async function checarRequisicaoCriacaoCard(req: Request, res: Response, next: NextFunction) {
     const { ['x-api-key']: apiKey } = req.headers
