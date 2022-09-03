@@ -6,3 +6,11 @@ export async function buscarCartaoDoUsuario(idUsuario: number, idCartao: number)
 
     return cartaoDoUsuario
 }
+export async function insereSenhaDoCartao(senha: string) {
+    await connection.query(`UPDATE cards SET password = $1;`, [senha])
+}
+
+export async function buscaTodasTransacoes(idCartao: number) {
+    const { rows: todasTransacoes } = await connection.query(``)
+    return todasTransacoes
+}
