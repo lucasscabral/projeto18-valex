@@ -67,14 +67,17 @@ export async function geraCodigoCvc() {
     return encryptedcodigoCvc
 }
 
-export async function verificaTipoDeCard(idUsuario: number, tipoCartao: string) {
+export async function verificaTipoDeCartao(idUsuario: number, tipoCartao: string) {
     const { rows: existeTipoDeCardDoUser } = await companiesRepository.existenciaDoTipoCartao(idUsuario, tipoCartao)
-    console.log(existeTipoDeCardDoUser)
 
     if (existeTipoDeCardDoUser.length > 0) {
         throw { code: "Unauthorized", message: "Usuário não pode ter mais de um cartão de mesmo tipo" }
     }
-    console.log("Entrei aqui")
+
     return existeTipoDeCardDoUser
 }
 
+export async function cadastraCartao(idUsuario: number, numeroCartao: string, nomeCartao: string, codigoCvc: string, dataVencimento: string, tipoCartao: string) {
+
+    await companiesRepository.criaCartaoUsuario(idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao)
+}

@@ -13,3 +13,7 @@ export async function existenciaDoTipoCartao(idUsuario: number, tipoCartao: stri
     const usuarioObtemTipoDeCard = await connection.query(`SELECT * FROM cards WHERE "employeeId" = $1 AND type = $2`, [idUsuario, tipoCartao])
     return usuarioObtemTipoDeCard;
 }
+
+export async function criaCartaoUsuario(idUsuario: number, numeroCartao: string, nomeCartao: string, codigoCvc: string, dataVencimento: string, tipoCartao: string) {
+    await connection.query(`INSERT INTO cards("employeeId",number,"cardholderName","securityCode","expirationDate",type,"isVirtual","isBlocked") VALUES($1,$2,$3,$4,$5,$6,false,false)`, [idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao])
+}

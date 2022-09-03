@@ -4,7 +4,6 @@ import { checarRequisicaoCriacaoCard } from "../middlewers/companiesMiddlewer";
 
 const companiesRouter = Router()
 
-// companiesRouter.get()
 companiesRouter.post("/companies/:idUser/card", checarRequisicaoCriacaoCard, companiesController.createCards)
 
 export default companiesRouter 
