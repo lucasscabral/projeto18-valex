@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { validaSenha, validaBlockUnLock } from "../schemas/employeeSchema";
+import { validaSenha, validaBlockUnLock, validaCorpoPagamento } from "../schemas/employeeSchema";
 
 export async function validarCorpoSenha(req: Request, res: Response, next: NextFunction) {
     const body = req.body
@@ -27,3 +27,6 @@ export async function validarCorpoBlockUnlLock(req: Request, res: Response, next
     next()
 }
 
+export async function checaCorpoPagamento(req: Request, res: Response, next: NextFunction) {
+
+}

@@ -81,3 +81,13 @@ export async function cadastraCartao(idUsuario: number, numeroCartao: string, no
 
     await companiesRepository.criaCartaoUsuario(idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao)
 }
+
+export async function verificaCartaoCadastrado(senhaCadastrada: string | null) {
+    if (senhaCadastrada === null) {
+        throw { code: "Unauthorized", message: "Esse cartão não está ativado" }
+    }
+}
+
+export async function efetuaRecarga(idCartao: number, recarga: number) {
+
+}

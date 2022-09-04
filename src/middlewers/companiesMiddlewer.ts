@@ -1,7 +1,7 @@
-import validaCorpoCriacaoCard from "../schemas/companiesSchema"
+import { validaCorpoCriacaoCard, validaCorpoRecarga } from "../schemas/companiesSchema"
 import { Request, Response, NextFunction } from "express"
 
-export async function checarRequisicaoCriacaoCard(req: Request, res: Response, next: NextFunction) {
+export async function checaCorpoDeCriacaoCard(req: Request, res: Response, next: NextFunction) {
     const { ['x-api-key']: apiKey } = req.headers
     if (!apiKey) {
         return res.status(403).send('Informe uma API KEY')
@@ -14,7 +14,7 @@ export async function checarRequisicaoCriacaoCard(req: Request, res: Response, n
         return res.status(403).send("Informe todos os dados")
     }
 
-    if (!checaTipoDoCArtao(tipoCartao)) {
+    if (!checaTipoDoCartao(tipoCartao)) {
         return res.status(403).send("O Tipo do cartão deve ser válido")
     }
 
@@ -24,7 +24,7 @@ export async function checarRequisicaoCriacaoCard(req: Request, res: Response, n
     next()
 }
 
-function checaTipoDoCArtao(tipoCartao: string): boolean {
+function checaTipoDoCartao(tipoCartao: string): boolean {
     let checado = false
     if ((tipoCartao === 'groceries') || (tipoCartao === 'restaurant') || (tipoCartao === 'transport') || (tipoCartao === 'education') || (tipoCartao === 'health')) {
         checado = true
@@ -32,3 +32,21 @@ function checaTipoDoCArtao(tipoCartao: string): boolean {
     }
     return checado
 }
+
+export async function checaCorpoRecarga(req: Request, res: Response, next: NextFunction) {
+    const { ['x-api-key']: apiKey } = req.headers
+    const body = req.body
+    console.log(body)
+    if (!apiKey) {
+        return res.status(403).send('Informe uma API KEY')
+    }
+
+    const validouCorpo = validaCorpoRecarga.validate(body)
+    if (validouCorpo.error) {
+        return res.status(403).send("Verifique todos os dados")
+    }
+
+    res.locals.body = body
+    next()
+}
+
