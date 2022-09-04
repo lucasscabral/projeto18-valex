@@ -88,6 +88,6 @@ export async function verificaCartaoCadastrado(senhaCadastrada: string | null) {
     }
 }
 
-export async function efetuaRecarga(idCartao: number, recarga: number) {
-
+export async function efetuaRecarga(idCartao: number, dataRecarga: string, recarga: number) {
+    await companiesRepository.insereRegarga(idCartao, dataRecarga, recarga)
 }

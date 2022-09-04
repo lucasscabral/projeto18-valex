@@ -17,3 +17,7 @@ export async function existenciaDoTipoCartao(idUsuario: number, tipoCartao: stri
 export async function criaCartaoUsuario(idUsuario: number, numeroCartao: string, nomeCartao: string, codigoCvc: string, dataVencimento: string, tipoCartao: string) {
     await connection.query(`INSERT INTO cards("employeeId",number,"cardholderName","securityCode","expirationDate",type,"isVirtual","isBlocked") VALUES($1,$2,$3,$4,$5,$6,false,false)`, [idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao])
 }
+
+export async function insereRegarga(idCartao: number, dataRecarga: string, recarga: number) {
+    await connection.query(`INSERT INTO recharges("cardId",timestamp,amount) VALUES($1,$2,$3);`, [idCartao, dataRecarga, recarga])
+}

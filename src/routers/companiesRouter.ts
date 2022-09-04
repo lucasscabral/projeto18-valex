@@ -5,6 +5,6 @@ import { checaCorpoDeCriacaoCard, checaCorpoRecarga } from "../middlewers/compan
 const companiesRouter = Router()
 
 companiesRouter.post("/companies/:idUser/card", checaCorpoDeCriacaoCard, companiesController.criarCartao)
-companiesRouter.post("/companies/recharges", checaCorpoRecarga)
+companiesRouter.post("/companies/recharges", checaCorpoRecarga, companiesController.recarregaCartao)
 
 export default companiesRouter 

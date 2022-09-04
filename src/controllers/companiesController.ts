@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { verificaExistenciaDeCartao } from "../utils/utilsService";
-import { buscarEmpresa, buscarUsuario, formaNumeroCartaoFormatado, formatarNomeCartao, geraDataDeValidade, geraCodigoCvc, verificaTipoDeCartao, cadastraCartao, verificaCartaoCadastrado } from "../services/companiesService";
+import { buscarEmpresa, buscarUsuario, formaNumeroCartaoFormatado, formatarNomeCartao, geraDataDeValidade, geraCodigoCvc, verificaTipoDeCartao, cadastraCartao, verificaCartaoCadastrado, efetuaRecarga } from "../services/companiesService";
 import { verificaExpiracaoDoCartao } from "../services/employeeService";
+import dayjs from "dayjs";
 
 export async function criarCartao(req: Request, res: Response) {
     const apiKey = res.locals.apiKey
@@ -33,6 +34,12 @@ export async function criarCartao(req: Request, res: Response) {
 
 export async function recarregaCartao(req: Request, res: Response) {
     const { cardId, amount } = res.locals.body
+    const data = {
+        cardId,
+        timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+        amount
+    }
+    console.log(data.timestamp)
 
     try {
         const cartaoCadastrado = await verificaExistenciaDeCartao(cardId)
@@ -41,6 +48,9 @@ export async function recarregaCartao(req: Request, res: Response) {
 
         await verificaExpiracaoDoCartao(cartaoCadastrado[0].expirationDate)
 
+        await efetuaRecarga(data.cardId, data.timestamp, data.amount)
+
+        res.sendStatus(200)
     } catch ({ code, message }) {
         if (code === "NotFound") {
             return res.status(404).send(message)
