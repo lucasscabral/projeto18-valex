@@ -1,6 +1,5 @@
 import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes } from "../repositories/employeeRepository";
 import { verificaExistenciaDeUsuario } from "../utils/utilsService";
-// import { insereSenhaDoCartao } from "../repositories/employeeRepository";
 import dayjs from "dayjs";
 import Cryptr from "cryptr";
 import bcrypt from "bcrypt"
@@ -9,7 +8,7 @@ export async function verificaCartaoDeUsuario(idUsuario: number, idCartao: numbe
     await verificaExistenciaDeUsuario(idUsuario)
     const cartaoDoUsuario = await buscarCartaoDoUsuario(idUsuario, idCartao)
     if (cartaoDoUsuario.length === 0) {
-        throw { code: "NotFound", message: "Esse cartão não pertence a esse usuário" }
+        throw { code: "Unauthorized", message: "Esse cartão não pertence a esse usuário" }
     }
     return cartaoDoUsuario
 }
@@ -23,8 +22,8 @@ export async function verificaExpiracaoDoCartao(dataExpiracao: string) {
     }
 }
 
-export async function verificaCartaoCadastrado(senhaCadastrada: string) {
-    if (senhaCadastrada.length > 0) {
+export async function verificaCartaoCadastrado(senhaCadastrada: string | null) {
+    if (senhaCadastrada !== null) {
         throw { code: "Unauthorized", message: "Esse cartão já está ativado" }
     }
 }
@@ -33,6 +32,7 @@ export async function verificaCodigoCvc(codigoCvcCadastrado: string, codigoCvc: 
     const cryptr = new Cryptr('myTotallySecretKey');
     const cvcConvertido = Number(codigoCvc)
     const descryptaCvcCadastrado = cryptr.decrypt(codigoCvcCadastrado)
+    console.log(descryptaCvcCadastrado)
     if (cvcConvertido !== Number(descryptaCvcCadastrado)) {
         throw { code: "Unauthorized", message: "Esse código CVC não pertence a esse cartão" }
     }

@@ -6,4 +6,10 @@ const validaSenha = joi.object({
     senha: joi.number().min(4).required()
 })
 
-export default validaSenha
+const validaBlockUnLock = joi.object({
+    idUsuario: joi.number().min(0).required(),
+    senha: joi.number().min(4).required()
+})
+
+
+export { validaSenha, validaBlockUnLock }

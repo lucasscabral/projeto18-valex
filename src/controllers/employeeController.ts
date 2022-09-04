@@ -16,6 +16,7 @@ export async function ativaCartao(req: Request, res: Response) {
         await verificaCodigoCvc(cartaoDoUsuario[0].securityCode, codigoCvc)
 
         await ativacaoDeCartao(senha)
+        res.sendStatus(201)
     } catch ({ code, message }) {
         if (code === "NotFound") {
             return res.status(404).send(message)
@@ -34,9 +35,7 @@ export async function listaTransacoesSaldo(req: Request, res: Response) {
     try {
         await verificaExistenciaDeCartao(Number(idCard))
 
-        const cartaoDoUsuario = await verificaCartaoDeUsuario(Number(idUser), Number(idCard))
-
-        await verificaCartaoCadastrado(cartaoDoUsuario[0].password)
+        await verificaCartaoDeUsuario(Number(idUser), Number(idCard))
 
         const todasTransacoes = await pegaTodasTransacoes(Number(idCard))
 
@@ -50,4 +49,10 @@ export async function listaTransacoesSaldo(req: Request, res: Response) {
         }
         res.sendStatus(500)
     }
+}
+
+export async function bloquearCartao(req: Request, res: Response) {
+
+
+
 }
