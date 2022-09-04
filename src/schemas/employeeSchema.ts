@@ -7,7 +7,7 @@ const validaSenha = joi.object({
 })
 
 const validaBlockUnLock = joi.object({
-    idUsuario: joi.number().min(0).required(),
+    idCartao: joi.number().min(0).required(),
     senha: joi.number().min(4).required()
 })
 

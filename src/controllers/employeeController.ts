@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { verificaCartaoDeUsuario, verificaExpiracaoDoCartao, verificaCartaoCadastrado, verificaCodigoCvc, ativacaoDeCartao, pegaTodasTransacoes } from "../services/employeeService";
+import { verificaCartaoDeUsuario, verificaExpiracaoDoCartao, verificaCartaoCadastrado, verificaCodigoCvc, ativacaoDeCartao, pegaTodasTransacoes, comparaSenhaCartao, verificaBloqueioDoCarato, bloquearOuDesbloquearCartao } from "../services/employeeService";
 import { verificaExistenciaDeCartao } from "../utils/utilsService";
 
 export async function ativaCartao(req: Request, res: Response) {
@@ -15,7 +15,7 @@ export async function ativaCartao(req: Request, res: Response) {
 
         await verificaCodigoCvc(cartaoDoUsuario[0].securityCode, codigoCvc)
 
-        await ativacaoDeCartao(senha)
+        await ativacaoDeCartao(senha, idCartao)
         res.sendStatus(201)
     } catch ({ code, message }) {
         if (code === "NotFound") {
@@ -52,7 +52,29 @@ export async function listaTransacoesSaldo(req: Request, res: Response) {
 }
 
 export async function bloquearCartao(req: Request, res: Response) {
+    const { idUser } = req.params
+    const { idCartao, senha } = res.locals.body
+    const bloquearCartao = true
 
+    try {
+        const cartaoCadastrado = await verificaExistenciaDeCartao(idCartao)
+        await verificaCartaoDeUsuario(Number(idUser), Number(idCartao))
 
+        await comparaSenhaCartao(senha, cartaoCadastrado[0].password)
 
+        await verificaExpiracaoDoCartao(cartaoCadastrado[0].expirationDate)
+
+        await verificaBloqueioDoCarato(cartaoCadastrado[0].isBlocked)
+        console.log(cartaoCadastrado[0].isBlocked)
+        await bloquearOuDesbloquearCartao(bloquearCartao, idCartao)
+        res.sendStatus(200)
+    } catch ({ code, message }) {
+        if (code === "NotFound") {
+            return res.status(404).send(message)
+        }
+        if (code === "Unauthorized") {
+            return res.status(401).send(message)
+        }
+        res.sendStatus(500)
+    }
 }

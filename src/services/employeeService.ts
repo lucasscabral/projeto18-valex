@@ -1,4 +1,4 @@
-import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes } from "../repositories/employeeRepository";
+import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes, atualizaStatusDoCartao } from "../repositories/employeeRepository";
 import { verificaExistenciaDeUsuario } from "../utils/utilsService";
 import dayjs from "dayjs";
 import Cryptr from "cryptr";
@@ -17,7 +17,7 @@ export async function verificaExpiracaoDoCartao(dataExpiracao: string) {
     const dataAtual = dayjs().format("MM/YYYY")
     const converteDataAtual = dataAtual.replace("/", "")
     const dataExpiracaoCartao = dataExpiracao.replace("/", "")
-    if (converteDataAtual >= dataExpiracaoCartao) {
+    if (converteDataAtual > dataExpiracaoCartao) {
         throw { code: "Unauthorized", message: "Esse cartão ja expirou" }
     }
 }
@@ -38,12 +38,35 @@ export async function verificaCodigoCvc(codigoCvcCadastrado: string, codigoCvc: 
     }
 }
 
-export async function ativacaoDeCartao(senha: number) {
+export async function ativacaoDeCartao(senha: number, idCartao: number) {
     const senhaEncryptografada: string = bcrypt.hashSync(senha.toString(), 10)
-    await insereSenhaDoCartao(senhaEncryptografada)
+    await insereSenhaDoCartao(senhaEncryptografada, idCartao)
 }
 
 export async function pegaTodasTransacoes(idCartao: number) {
     const todasTransacoes = await buscaTodasTransacoes(idCartao)
     return todasTransacoes
+}
+
+export async function comparaSenhaCartao(senha: number, senhaJaCadastrada: string) {
+    const comparaSenha = bcrypt.compareSync((senha).toString(), senhaJaCadastrada)
+    if (!comparaSenha) {
+        throw { code: "Unauthorized", message: "Senha inválida" }
+    }
+}
+
+export async function verificaBloqueioDoCarato(cartaoBloqueado: boolean) {
+    if (cartaoBloqueado) {
+        throw { code: "Unauthorized", message: "Esse cartão já esta bloqueado" }
+    }
+}
+
+export async function verificaDesbloqueioDoCarato(cartaoBloqueado: boolean) {
+    if (!cartaoBloqueado) {
+        throw { code: "Unauthorized", message: "Esse cartão já esta desbloqueado" }
+    }
+}
+
+export async function bloquearOuDesbloquearCartao(statusCartao: boolean, idCartao: number) {
+    await atualizaStatusDoCartao(statusCartao, idCartao)
 }
