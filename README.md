@@ -19,21 +19,24 @@
 
 ### 👉EndPoints da Aplicação e descrição de cada um
 
-
+--post("/companies/:idUser/card")
+ **Esse endPoint Cria um cartão para o empregado,passando o identificador do empregado pela URL.**
+--post("/companies/recharges")
+ **Esse endPoint faz uma recarga no cartão do empregado,passando o identificador do cartaão e a quantia pelo corpo da requisição.**
+ 
 --post("/employee/:idUser/card")
-
+ **Esse endPoint ativa um cartão,passando o identificador do empregado pela URL e no corpo da requisição,passa o identificador do cartão,o codigoCvc e a senha.**
 
 --get("/employee/:idUser/:idCard/cardTransactions")
-
+ **Esse endPoint lista todas as transações e o saldo de um cartão do empregado,passando o identificador do empregado e no cartão pela URL.**
+ 
 --post("/employee/blockCard/:idUser")
-
+ **Esse endPoint bloqueia um cartão pelo empregado,passando o identificador do empregado pela URL e no corpo da requisição,passa o identificador do cartão e a senha do mesmo.**
+ 
 --post("/employee/unlockCard/:idUser")
-
+ **Esse endPoint desbloqueia um cartão pelo empregado,passando o identificador do empregado pela URL e no corpo da requisição,passa o identificador do cartão e a senha do mesmo.**
 --post("/employee/payments")
-
---post("/companies/:idUser/card")
-
---post("/companies/recharges")
+ **Esse endPoint efetua uma compra pelo empregado,passando no corpo da requisição o identificador do cartão, a senha do mesmo,o identificador do Negócio e a quantia.**
 
 
 
