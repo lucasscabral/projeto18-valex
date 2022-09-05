@@ -1,4 +1,4 @@
-import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes, atualizaStatusDoCartao, buscaEstabelecimento } from "../repositories/employeeRepository";
+import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes, atualizaStatusDoCartao, buscaEstabelecimento, calculaSaldo, calculaSaldoCompras, insereCompra } from "../repositories/employeeRepository";
 import { verificaExistenciaDeUsuario } from "../utils/utilsService";
 import dayjs from "dayjs";
 import Cryptr from "cryptr";
@@ -89,4 +89,30 @@ export async function verificaTipoDoCartao(tipoCartao: string, tipoEstabelecimen
     if (tipoCartao !== tipoEstabelecimento) {
         throw { code: "Unauthorized", message: "Esse estabelecimento não aceita esse tipo de cartão" }
     }
+}
+
+export async function verificaSaldoSuficiente(idCartao: number, saldoCompras: number) {
+    const totalSaldoRecarga = await calculaSaldo(idCartao)
+    const totalSaldoCompras = await calculaSaldoCompras(idCartao)
+
+    if (totalSaldoCompras.montante === null) {
+        calculaMontante(totalSaldoRecarga.montante, saldoCompras, totalSaldoCompras.montante)
+
+    } else {
+        calculaMontante(totalSaldoRecarga.montante, saldoCompras, totalSaldoCompras.montante)
+    }
+}
+
+function calculaMontante(totalSaldoRecarga: number, saldoCompras: number, totalSaldoCompras: number | null) {
+
+    if (Number(totalSaldoRecarga) < saldoCompras && totalSaldoCompras === null) {
+        throw { code: "Unauthorized", message: "Saldo insuficiente" }
+
+    } else if (Number(totalSaldoRecarga) < (saldoCompras + Number(totalSaldoCompras))) {
+        throw { code: "Unauthorized", message: "Saldo insuficiente" }
+    }
+}
+
+export async function efetuaCompra(idCartao: number, idNegocio: number, dataCompra: string, quantia: number) {
+    await insereCompra(idCartao, idNegocio, dataCompra, quantia)
 }

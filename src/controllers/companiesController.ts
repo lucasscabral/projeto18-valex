@@ -34,12 +34,7 @@ export async function criarCartao(req: Request, res: Response) {
 
 export async function recarregaCartao(req: Request, res: Response) {
     const { idCartao, quantia } = res.locals.body
-    const data = {
-        idCartao,
-        timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        quantia
-    }
-    console.log(data.timestamp)
+    const dataRecarga = dayjs().format("YYYY-MM-DD HH:mm:ss")
 
     try {
         const cartaoCadastrado = await verificaExistenciaDeCartao(idCartao)
@@ -48,7 +43,7 @@ export async function recarregaCartao(req: Request, res: Response) {
 
         await verificaExpiracaoDoCartao(cartaoCadastrado[0].expirationDate)
 
-        await companiesService.efetuaRecarga(data.idCartao, data.timestamp, data.quantia)
+        await companiesService.efetuaRecarga(idCartao, dataRecarga, quantia)
 
         res.sendStatus(200)
     } catch ({ code, message }) {

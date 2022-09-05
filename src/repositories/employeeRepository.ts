@@ -22,3 +22,17 @@ export async function buscaEstabelecimento(idEstabelecimento: number) {
     const { rows: estabelecimento } = await connection.query(`SELECT * FROM businesses WHERE id = $1;`, [idEstabelecimento])
     return estabelecimento
 }
+
+export async function calculaSaldo(idCartao: number) {
+    const { rows: saldoRecarga } = await connection.query(`SELECT SUM(amount) as montante FROM recharges WHERE "cardId" = $1;`, [idCartao])
+    return saldoRecarga[0]
+}
+
+export async function calculaSaldoCompras(idCartao: number) {
+    const { rows: saldoRecarga } = await connection.query(`SELECT SUM(amount) as montante FROM payments WHERE "cardId" = $1;`, [idCartao])
+    return saldoRecarga[0]
+}
+
+export async function insereCompra(idCartao: number, idNegocio: number, dataCompra: string, quantia: number) {
+    await connection.query(`INSERT INTO payments("cardId", "businessId",timestamp,amount) VALUES($1,$2,$3,$4);`, [idCartao, idNegocio, dataCompra, quantia])
+}

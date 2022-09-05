@@ -3,8 +3,6 @@ import * as employeeService from "../services/employeeService";
 import { verificaExistenciaDeCartao } from "../utils/utilsService";
 import dayjs from "dayjs";
 
-// { verificaCartaoDeUsuario, verificaExpiracaoDoCartao, verificaCartaoCadastrado, verificaCodigoCvc, ativacaoDeCartao, pegaTodasTransacoes, comparaSenhaCartao, verificaBloqueioDoCarato, verificaDesbloqueioDoCarato, bloquearOuDesbloquearCartao, verificaCartaoAtivo }
-
 export async function ativaCartao(req: Request, res: Response) {
     const idUsuario = Number(req.params.idUser)
     const { idCartao, codigoCvc, senha } = res.locals.body
@@ -112,15 +110,7 @@ export async function desbloquearCartao(req: Request, res: Response) {
 
 export async function compras(req: Request, res: Response) {
     const { idCartao, senha, idNegocio, quantia } = res.locals.body
-    const data = {
-        idCartao,
-        senha,
-        idNegocio,
-        timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        quantia
-    }
-
-    console.log(data.timestamp)
+    const dataCompra = dayjs().format("YYYY-MM-DD HH:mm:ss")
 
     try {
         const cartaoCadastrado = await verificaExistenciaDeCartao(idCartao)
@@ -136,6 +126,10 @@ export async function compras(req: Request, res: Response) {
         const estabelecimento = await employeeService.verificaEstabelcimento(idNegocio)
 
         await employeeService.verificaTipoDoCartao(cartaoCadastrado[0].type, estabelecimento[0].type)
+
+        await employeeService.verificaSaldoSuficiente(idCartao, quantia)
+
+        await employeeService.efetuaCompra(idCartao, idNegocio, dataCompra, quantia)
         res.sendStatus(200)
     } catch ({ code, message }) {
         if (code === "NotFound") {
