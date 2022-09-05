@@ -66,7 +66,7 @@ export async function bloquearCartao(req: Request, res: Response) {
         await employeeService.verificaExpiracaoDoCartao(cartaoCadastrado[0].expirationDate)
 
         await employeeService.verificaBloqueioDoCarato(cartaoCadastrado[0].isBlocked)
-        console.log(cartaoCadastrado[0].isBlocked)
+
         await employeeService.bloquearOuDesbloquearCartao(bloquearCartao, idCartao)
         res.sendStatus(200)
     } catch ({ code, message }) {
@@ -94,7 +94,7 @@ export async function desbloquearCartao(req: Request, res: Response) {
         await employeeService.verificaExpiracaoDoCartao(cartaoCadastrado[0].expirationDate)
 
         await employeeService.verificaDesbloqueioDoCarato(cartaoCadastrado[0].isBlocked)
-        console.log(cartaoCadastrado[0].isBlocked)
+
         await employeeService.bloquearOuDesbloquearCartao(bloquearCartao, idCartao)
         res.sendStatus(200)
     } catch ({ code, message }) {
@@ -130,6 +130,7 @@ export async function compras(req: Request, res: Response) {
         await employeeService.verificaSaldoSuficiente(idCartao, quantia)
 
         await employeeService.efetuaCompra(idCartao, idNegocio, dataCompra, quantia)
+
         res.sendStatus(200)
     } catch ({ code, message }) {
         if (code === "NotFound") {

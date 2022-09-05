@@ -1,12 +1,12 @@
-import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes, atualizaStatusDoCartao, buscaEstabelecimento, calculaSaldo, calculaSaldoCompras, insereCompra } from "../repositories/employeeRepository";
-import { verificaExistenciaDeUsuario } from "../utils/utilsService";
+import * as employeeRepository from "../repositories/employeeRepository";
+import { verificaExistenciaDeUsuario, calculaMontanteDoCartao } from "../utils/utilsService";
 import dayjs from "dayjs";
 import Cryptr from "cryptr";
 import bcrypt from "bcrypt"
 
 export async function verificaCartaoDeUsuario(idUsuario: number, idCartao: number) {
     await verificaExistenciaDeUsuario(idUsuario)
-    const cartaoDoUsuario = await buscarCartaoDoUsuario(idUsuario, idCartao)
+    const cartaoDoUsuario = await employeeRepository.buscarCartaoDoUsuario(idUsuario, idCartao)
     if (cartaoDoUsuario.length === 0) {
         throw { code: "Unauthorized", message: "Esse cartão não pertence a esse usuário" }
     }
@@ -38,7 +38,7 @@ export async function verificaCodigoCvc(codigoCvcCadastrado: string, codigoCvc: 
     const cryptr = new Cryptr('myTotallySecretKey');
     const cvcConvertido = Number(codigoCvc)
     const descryptaCvcCadastrado = cryptr.decrypt(codigoCvcCadastrado)
-    console.log(descryptaCvcCadastrado)
+
     if (cvcConvertido !== Number(descryptaCvcCadastrado)) {
         throw { code: "Unauthorized", message: "Esse código CVC não pertence a esse cartão" }
     }
@@ -46,12 +46,21 @@ export async function verificaCodigoCvc(codigoCvcCadastrado: string, codigoCvc: 
 
 export async function ativacaoDeCartao(senha: number, idCartao: number) {
     const senhaEncryptografada: string = bcrypt.hashSync(senha.toString(), 10)
-    await insereSenhaDoCartao(senhaEncryptografada, idCartao)
+    await employeeRepository.insereSenhaDoCartao(senhaEncryptografada, idCartao)
 }
 
 export async function pegaTodasTransacoes(idCartao: number) {
-    const todasTransacoes = await buscaTodasTransacoes(idCartao)
-    return todasTransacoes
+    const todasTransacoesDeCompras = await employeeRepository.buscaTodasTransacoesDeCompras(idCartao)
+    const todasTransacoesDeRecargas = await employeeRepository.buscaTodasTransacoesDeRecargas(idCartao)
+    const saldoTotal = await calculaMontanteDoCartao(idCartao)
+
+    const corpoTransacoes = {
+        balance: saldoTotal,
+        transactions: todasTransacoesDeCompras.transactions,
+        recharges: todasTransacoesDeRecargas.recharges
+    }
+
+    return corpoTransacoes
 }
 
 export async function comparaSenhaCartao(senha: number, senhaJaCadastrada: string) {
@@ -74,11 +83,11 @@ export async function verificaDesbloqueioDoCarato(cartaoBloqueado: boolean) {
 }
 
 export async function bloquearOuDesbloquearCartao(statusCartao: boolean, idCartao: number) {
-    await atualizaStatusDoCartao(statusCartao, idCartao)
+    await employeeRepository.atualizaStatusDoCartao(statusCartao, idCartao)
 }
 
 export async function verificaEstabelcimento(idEstabelecimento: number) {
-    const estabelecimento = await buscaEstabelecimento(idEstabelecimento)
+    const estabelecimento = await employeeRepository.buscaEstabelecimento(idEstabelecimento)
     if (estabelecimento.length === 0) {
         throw { code: "NotFound", message: "Esse estabelecimento não está cadastrado" }
     }
@@ -92,14 +101,14 @@ export async function verificaTipoDoCartao(tipoCartao: string, tipoEstabelecimen
 }
 
 export async function verificaSaldoSuficiente(idCartao: number, saldoCompras: number) {
-    const totalSaldoRecarga = await calculaSaldo(idCartao)
-    const totalSaldoCompras = await calculaSaldoCompras(idCartao)
+    const totalSaldoRecarga = await employeeRepository.calculaSaldoRecarga(idCartao)
+    const totalSaldoCompras = await employeeRepository.calculaSaldoCompras(idCartao)
 
-    if (totalSaldoCompras.montante === null) {
-        calculaMontante(totalSaldoRecarga.montante, saldoCompras, totalSaldoCompras.montante)
+    if (totalSaldoCompras.montanteCompras === null) {
+        calculaMontante(totalSaldoRecarga.montanteRecargas, saldoCompras, totalSaldoCompras.montanteCompras)
 
     } else {
-        calculaMontante(totalSaldoRecarga.montante, saldoCompras, totalSaldoCompras.montante)
+        calculaMontante(totalSaldoRecarga.montanteRecargas, saldoCompras, totalSaldoCompras.montanteCompras)
     }
 }
 
@@ -114,5 +123,5 @@ function calculaMontante(totalSaldoRecarga: number, saldoCompras: number, totalS
 }
 
 export async function efetuaCompra(idCartao: number, idNegocio: number, dataCompra: string, quantia: number) {
-    await insereCompra(idCartao, idNegocio, dataCompra, quantia)
+    await employeeRepository.insereCompra(idCartao, idNegocio, dataCompra, quantia)
 }

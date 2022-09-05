@@ -10,11 +10,17 @@ export async function criarCartao(req: Request, res: Response) {
     const idUsuario = Number(req.params.idUser)
     try {
         await companiesService.buscarEmpresa(apiKey)
+
         const verificaIdUsuario = await companiesService.buscarUsuario(idUsuario)
+
         const numeroCartao = await companiesService.formaNumeroCartaoFormatado()
+
         const nomeCartao = await companiesService.formatarNomeCartao(verificaIdUsuario.fullName)
+
         const dataVencimento = await companiesService.geraDataDeValidade()
+
         const codigoCvc = await companiesService.geraCodigoCvc()
+
         await companiesService.verificaTipoDeCartao(idUsuario, tipoCartao)
 
         await companiesService.cadastraCartao(idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao)

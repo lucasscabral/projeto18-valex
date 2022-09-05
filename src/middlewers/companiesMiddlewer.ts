@@ -36,7 +36,7 @@ function checaTipoDoCartao(tipoCartao: string): boolean {
 export async function checaCorpoRecarga(req: Request, res: Response, next: NextFunction) {
     const { ['x-api-key']: apiKey } = req.headers
     const body = req.body
-    console.log(body)
+
     if (!apiKey) {
         return res.status(403).send('Informe uma API KEY')
     }

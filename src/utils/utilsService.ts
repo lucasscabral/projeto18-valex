@@ -1,3 +1,4 @@
+import { calculaSaldoCompras, calculaSaldoRecarga } from "../repositories/employeeRepository";
 import { buscaUsuario, buscaCartao } from "./utilsRepository";
 
 
@@ -15,4 +16,12 @@ export async function verificaExistenciaDeCartao(idCartao: number) {
         throw { code: "NotFound", message: "Cartão não encontrado" }
     }
     return cartao
+}
+
+export async function calculaMontanteDoCartao(idCartao: number) {
+    const totalSaldoRecarga = await calculaSaldoRecarga(idCartao)
+    const totalSaldoCompras = await calculaSaldoCompras(idCartao)
+
+    const saldoTotal = Number(totalSaldoRecarga.montanteRecargas) - Number(totalSaldoCompras.montanteCompras)
+    return saldoTotal
 }
