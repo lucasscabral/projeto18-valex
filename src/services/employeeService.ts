@@ -1,4 +1,4 @@
-import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes, atualizaStatusDoCartao } from "../repositories/employeeRepository";
+import { buscarCartaoDoUsuario, insereSenhaDoCartao, buscaTodasTransacoes, atualizaStatusDoCartao, buscaEstabelecimento } from "../repositories/employeeRepository";
 import { verificaExistenciaDeUsuario } from "../utils/utilsService";
 import dayjs from "dayjs";
 import Cryptr from "cryptr";
@@ -25,6 +25,12 @@ export async function verificaExpiracaoDoCartao(dataExpiracao: string) {
 export async function verificaCartaoCadastrado(senhaCadastrada: string | null) {
     if (senhaCadastrada !== null) {
         throw { code: "Unauthorized", message: "Esse cartão já está ativado" }
+    }
+}
+
+export async function verificaCartaoAtivo(senhaCadastrada: string | null) {
+    if (senhaCadastrada === null) {
+        throw { code: "Unauthorized", message: "Esse cartão não está ativado" }
     }
 }
 
@@ -57,16 +63,30 @@ export async function comparaSenhaCartao(senha: number, senhaJaCadastrada: strin
 
 export async function verificaBloqueioDoCarato(cartaoBloqueado: boolean) {
     if (cartaoBloqueado) {
-        throw { code: "Unauthorized", message: "Esse cartão já esta bloqueado" }
+        throw { code: "Unauthorized", message: "Esse cartão esta bloqueado" }
     }
 }
 
 export async function verificaDesbloqueioDoCarato(cartaoBloqueado: boolean) {
     if (!cartaoBloqueado) {
-        throw { code: "Unauthorized", message: "Esse cartão já esta desbloqueado" }
+        throw { code: "Unauthorized", message: "Esse cartão esta desbloqueado" }
     }
 }
 
 export async function bloquearOuDesbloquearCartao(statusCartao: boolean, idCartao: number) {
     await atualizaStatusDoCartao(statusCartao, idCartao)
+}
+
+export async function verificaEstabelcimento(idEstabelecimento: number) {
+    const estabelecimento = await buscaEstabelecimento(idEstabelecimento)
+    if (estabelecimento.length === 0) {
+        throw { code: "NotFound", message: "Esse estabelecimento não está cadastrado" }
+    }
+    return estabelecimento
+}
+
+export async function verificaTipoDoCartao(tipoCartao: string, tipoEstabelecimento: string) {
+    if (tipoCartao !== tipoEstabelecimento) {
+        throw { code: "Unauthorized", message: "Esse estabelecimento não aceita esse tipo de cartão" }
+    }
 }

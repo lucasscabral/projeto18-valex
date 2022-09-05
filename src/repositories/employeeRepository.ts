@@ -17,3 +17,8 @@ export async function buscaTodasTransacoes(idCartao: number) {
 export async function atualizaStatusDoCartao(statusCartao: boolean, idCartao: number) {
     await connection.query(`UPDATE cards SET "isBlocked" = $1 WHERE id = $2;`, [statusCartao, idCartao])
 }
+
+export async function buscaEstabelecimento(idEstabelecimento: number) {
+    const { rows: estabelecimento } = await connection.query(`SELECT * FROM businesses WHERE id = $1;`, [idEstabelecimento])
+    return estabelecimento
+}

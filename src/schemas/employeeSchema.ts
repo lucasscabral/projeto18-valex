@@ -12,9 +12,10 @@ const validaBlockUnLock = joi.object({
 })
 
 const validaCorpoPagamento = joi.object({
-    cardId: joi.number().min(0).required(),
-    businessId: joi.number().min(0).required(),
-    amount: joi.number().integer().min(0).required()
+    idCartao: joi.number().min(0).required(),
+    senha: joi.number().min(4).required(),
+    idNegocio: joi.number().min(0).required(),
+    quantia: joi.number().integer().min(0).required()
 })
 
 

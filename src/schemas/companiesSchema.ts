@@ -5,8 +5,8 @@ const validaCorpoCriacaoCard = joi.object({
 })
 
 const validaCorpoRecarga = joi.object({
-    cardId: joi.number().min(0).required(),
-    amount: joi.number().integer().min(0).required()
+    idCartao: joi.number().min(0).required(),
+    quantia: joi.number().integer().min(0).required()
 })
 
 

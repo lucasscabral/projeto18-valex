@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { verificaExistenciaDeCartao } from "../utils/utilsService";
-import { buscarEmpresa, buscarUsuario, formaNumeroCartaoFormatado, formatarNomeCartao, geraDataDeValidade, geraCodigoCvc, verificaTipoDeCartao, cadastraCartao, verificaCartaoCadastrado, efetuaRecarga } from "../services/companiesService";
+import * as companiesService from "../services/companiesService";
 import { verificaExpiracaoDoCartao } from "../services/employeeService";
 import dayjs from "dayjs";
 
@@ -9,15 +9,15 @@ export async function criarCartao(req: Request, res: Response) {
     const tipoCartao = res.locals.tipoCartao
     const idUsuario = Number(req.params.idUser)
     try {
-        const verificaEmpresa = await buscarEmpresa(apiKey)
-        const verificaIdUsuario = await buscarUsuario(idUsuario)
-        const numeroCartao = await formaNumeroCartaoFormatado()
-        const nomeCartao = await formatarNomeCartao(verificaIdUsuario.fullName)
-        const dataVencimento = await geraDataDeValidade()
-        const codigoCvc = await geraCodigoCvc()
-        await verificaTipoDeCartao(idUsuario, tipoCartao)
+        await companiesService.buscarEmpresa(apiKey)
+        const verificaIdUsuario = await companiesService.buscarUsuario(idUsuario)
+        const numeroCartao = await companiesService.formaNumeroCartaoFormatado()
+        const nomeCartao = await companiesService.formatarNomeCartao(verificaIdUsuario.fullName)
+        const dataVencimento = await companiesService.geraDataDeValidade()
+        const codigoCvc = await companiesService.geraCodigoCvc()
+        await companiesService.verificaTipoDeCartao(idUsuario, tipoCartao)
 
-        await cadastraCartao(idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao)
+        await companiesService.cadastraCartao(idUsuario, numeroCartao, nomeCartao, codigoCvc, dataVencimento, tipoCartao)
 
         res.status(201).send("Cartão criado com sucesso")
     } catch ({ code, message }) {
@@ -33,22 +33,22 @@ export async function criarCartao(req: Request, res: Response) {
 }
 
 export async function recarregaCartao(req: Request, res: Response) {
-    const { cardId, amount } = res.locals.body
+    const { idCartao, quantia } = res.locals.body
     const data = {
-        cardId,
+        idCartao,
         timestamp: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        amount
+        quantia
     }
     console.log(data.timestamp)
 
     try {
-        const cartaoCadastrado = await verificaExistenciaDeCartao(cardId)
+        const cartaoCadastrado = await verificaExistenciaDeCartao(idCartao)
 
-        await verificaCartaoCadastrado(cartaoCadastrado[0].password)
+        await companiesService.verificaCartaoCadastrado(cartaoCadastrado[0].password)
 
         await verificaExpiracaoDoCartao(cartaoCadastrado[0].expirationDate)
 
-        await efetuaRecarga(data.cardId, data.timestamp, data.amount)
+        await companiesService.efetuaRecarga(data.idCartao, data.timestamp, data.quantia)
 
         res.sendStatus(200)
     } catch ({ code, message }) {
