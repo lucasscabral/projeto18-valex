@@ -1,13 +1,13 @@
 <h1 align="center"> Projeto Valex </h1>
 
-👉## É um projeto onde, as empresas geram cartões para os empregados,com o intuito de gerar um cartão benefício para os empregados, podendo eles,fazer pagamento ou recebendo recargas no cartão.
+##👉 É um projeto onde, as empresas geram cartões para os empregados,com o intuito de gerar um cartão benefício para os empregados, podendo eles,fazer pagamento ou recebendo recargas no cartão.
 
 
 <h4 align="center"> 
 	🚧  Projeto Valex 🚀 concluído.  🚧
 </h4>
 
-👉### Features
+###👉 Features
 
 -- Cadastro de cartão
 -- Ativação do cartão
@@ -17,7 +17,7 @@
 -- Fazer compras com o cartão
 -- Listagem das Trasações de um cartão,com o saldo da conta
 
-👉### EndPoints da Aplicação e descrição de cada um
+### 👉EndPoints da Aplicação e descrição de cada um
 
 
 --post("/employee/:idUser/card")
@@ -37,13 +37,13 @@
 
 
 
-👉### Pré-requisitos
+### 👉Pré-requisitos
 
 Antes de começar, você vai precisar ter instalado em sua máquina as seguintes ferramentas:
 [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/),[Postgres](https://www.postgresql.org/). 
 Além disto é bom ter um editor para trabalhar com o código como [VSCode](https://code.visualstudio.com/)
 
-👉### Gerando o Banco de Dados
+### 👉Gerando o Banco de Dados
 ```bash
 # Clone este repositório
 $ git clone <https://github.com/lucasscabral/projeto18-valex>
@@ -61,7 +61,7 @@ bash ./create-database
 bash ./connect-database
 
 ```
-👉 ### 🎲 Rodando o Back End (servidor)
+###👉 🎲 Rodando o Back End (servidor)
 
 ```bash
 # Clone este repositório
