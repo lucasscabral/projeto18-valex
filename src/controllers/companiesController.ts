@@ -38,11 +38,14 @@ export async function criarCartao(req: Request, res: Response) {
 
 }
 
-export async function recarregaCartao(req: Request, res: Response) {
+export async function recarregaCartao(_: Request, res: Response) {
+    const apiKey = res.locals.apiKey
     const { idCartao, quantia } = res.locals.body
     const dataRecarga = dayjs().format("YYYY-MM-DD HH:mm:ss")
 
     try {
+        await companiesService.buscarEmpresa(apiKey)
+
         const cartaoCadastrado = await verificaExistenciaDeCartao(idCartao)
 
         await companiesService.verificaCartaoCadastrado(cartaoCadastrado[0].password)
