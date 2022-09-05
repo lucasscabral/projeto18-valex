@@ -1,13 +1,13 @@
 <h1 align="center"> Projeto Valex </h1>
 
-##👉 É um projeto onde, as empresas geram cartões para os empregados,com o intuito de gerar um cartão benefício para os empregados, podendo eles,fazer pagamento ou recebendo recargas no cartão.
+## 👉É um projeto onde, as empresas geram cartões para os empregados,com o intuito de gerar um cartão benefício para os empregados, podendo eles,fazer pagamento ou recebendo recargas no cartão.
 
 
 <h4 align="center"> 
 	🚧  Projeto Valex 🚀 concluído.  🚧
 </h4>
 
-###👉 Features
+### 👉Features
 
 -- Cadastro de cartão
 -- Ativação do cartão
@@ -61,7 +61,7 @@ bash ./create-database
 bash ./connect-database
 
 ```
-###👉 🎲 Rodando o Back End (servidor)
+### 👉Rodando o Back End (servidor)
 
 ```bash
 # Clone este repositório
